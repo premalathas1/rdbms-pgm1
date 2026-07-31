@@ -5,12 +5,24 @@ echo " CollegeDB SQL Assignment Autograding "
 echo "======================================"
 
 
-mysql -u root -proot < starter.sql
+MYSQL="mysql -h 127.0.0.1 -u root -proot"
+
+
+# Wait for MySQL Server
+
+echo "Waiting for MySQL Server..."
+
+sleep 20
+
+
+# Execute Student SQL File
+
+$MYSQL < starter.sql
 
 
 # Check Database Creation
 
-DB=$(mysql -u root -proot -N -e "SHOW DATABASES LIKE 'CollegeDB';")
+DB=$($MYSQL -N -e "SHOW DATABASES LIKE 'CollegeDB';")
 
 
 if [ "$DB" == "CollegeDB" ]
@@ -27,7 +39,7 @@ fi
 
 # Check Table Creation
 
-TABLE=$(mysql -u root -proot -N -e "
+TABLE=$($MYSQL -N -e "
 USE CollegeDB;
 SHOW TABLES LIKE 'Department';
 ")
@@ -44,21 +56,9 @@ fi
 
 
 
-# Check Columns
-
-COLUMN=$(mysql -u root -proot -N -e "
-USE CollegeDB;
-DESC Department;
-")
-
-
-echo "$COLUMN"
-
-
-
 # Check Primary Key
 
-PK=$(mysql -u root -proot -N -e "
+PK=$($MYSQL -N -e "
 USE CollegeDB;
 SHOW KEYS FROM Department WHERE Key_name='PRIMARY';
 ")
@@ -77,13 +77,13 @@ fi
 
 # Check Data Types
 
-TYPE=$(mysql -u root -proot -N -e "
+TYPE=$($MYSQL -N -e "
 USE CollegeDB;
 DESC Department;
 ")
 
 
-if echo "$TYPE" | grep -q "varchar"
+if echo "$TYPE" | grep -qi "varchar"
 then
     echo "✓ Data Types Verified"
     MARK4=1
